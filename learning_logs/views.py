@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from .forms import EntryForm, TopicForm
@@ -9,6 +10,7 @@ def index(request):
     return render(request, "learning_logs/index.html")
 
 
+@login_required
 def topics(request):
     """Show all topics."""
     topics = Topic.objects.order_by("date_added")
