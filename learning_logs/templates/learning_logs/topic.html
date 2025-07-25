@@ -7,16 +7,16 @@
 {% block content %}
 
   <p>
-    <a href="{% url 'learning_logs:new_entry' topic.id %}">Add new entry</a>
+    <a class="btn btn-outline-primary" href="{% url 'learning_logs:new_entry' topic.id %}">Add new entry</a>
   </p>
 
   {% for entry in entries %}
     <div class="card mb-3">
       <!-- Card header with timestamp and edit link -->
-      <h4 class="card-header">
+      <h4 class="card-header d-flex justify-content-between">
         {{ entry.date_added|date:"M d, Y H:i" }}
         <small>
-          <a href="{% url 'learning_logs:edit_entry' entry.id %}">
+          <a class="btn btn-outline-secondary" href="{% url 'learning_logs:edit_entry' entry.id %}">
             edit entry
           </a>
         </small>
