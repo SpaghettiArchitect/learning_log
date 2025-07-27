@@ -1,0 +1,53 @@
+name: "ll_project"
+type: "python:3.13"
+
+dependencies:
+  python3:
+    uv: "*"
+
+relationships:
+  database: "db:postgresql"
+
+# The configuration of the app when it's exposed to the web.
+web:
+  upstream:
+    socket_family: unix
+  commands:
+    start: "uv run gunicorn -w 4 -b unix:$SOCKET ll_project.wsgi:application"
+  locations:
+    "/":
+      passthru: true
+    "/static":
+      root: "static"
+      expires: 1h
+      allow: true
+
+# The size of the persistent disk of the application (in MB).
+disk: 512
+
+# Set a local read/write mount for logs.
+mounts:
+  "logs":
+    source: local
+    source_path: logs
+
+# The hooks executed at various points in the lifecycle of the application.
+hooks:
+  build: |
+    # Stop the build process if an error occurs.
+    set -eu
+
+    # Download the latest version of pip.
+    python3.13 -m pip install --upgrade pip
+
+    # Install the latest version of uv.
+    pip install uv
+
+    # Sync the project dependencies.
+    uv sync
+
+    mkdir logs
+    uv run python3.13 manage.py collectstatic
+    rm -rf logs
+  deploy: |
+    uv run python3.13 manage.py migrate
