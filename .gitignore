@@ -10,4 +10,8 @@ wheels/
 .venv
 
 # Default sqlite database for django
-db.sqlite3
+*.sqlite3
+
+# Track the directory existence but ignore the contents.
+.platform/local/*
+!.platform/local/.gitkeep
