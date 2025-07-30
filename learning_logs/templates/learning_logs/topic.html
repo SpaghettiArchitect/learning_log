@@ -1,25 +1,39 @@
 {% extends "learning_logs/base.html" %}
 
 {% block page_header %}
-  <h1>{{ topic.text }}</h1>
+  {% if topic.public and topic.owner == user %}
+    <h1 class="text-warning">
+      {{ topic.text }}
+    </h1>
+    <h3 class="text-secondary">PUBLIC TOPIC</h3>
+  {% else %}
+    <h1>{{ topic.text }}</h1>
+  {% endif %}
+
+  {% if topic.owner != user %}
+    <h3 class="text-secondary">Written by {{ topic.owner }}</h3>
+  {% endif %}
 {% endblock page_header %}
 
 {% block content %}
 
-  <p>
-    <a class="btn btn-outline-primary" href="{% url 'learning_logs:new_entry' topic.id %}">Add new entry</a>
-  </p>
+  {% if is_owner %}
+    <p>
+      <a class="btn btn-outline-primary" href="{% url 'learning_logs:new_entry' topic.id %}">Add new entry</a>
+    </p>
+  {% endif %}
 
   {% for entry in entries %}
     <div class="card mb-3">
       <!-- Card header with timestamp and edit link -->
       <h4 class="card-header d-flex justify-content-between">
         {{ entry.date_added|date:"M d, Y H:i" }}
-        <small>
+
+        {% if is_owner %}
           <a class="btn btn-outline-secondary" href="{% url 'learning_logs:edit_entry' entry.id %}">
             edit entry
           </a>
-        </small>
+        {% endif %}
       </h4>
       <!-- Card body with entry text -->
       <div class="card-body">{{ entry.text|linebreaks }}</div>

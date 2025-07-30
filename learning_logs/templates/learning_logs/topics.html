@@ -6,20 +6,58 @@
 
 {% block content %}
 
-  <p>
-    <a class="btn btn-outline-primary" href="{% url 'learning_logs:new_topic' %}">
+  <!-- Show "My topics" if the user is logged in. -->
+  {% if user.is_authenticated %}
+    <p>
+      Your public topics appear as <span class="text-warning">yellow</span>.
+       Be aware that your public topics and the entries they contain can be
+       viewed by other people (registered or not).
+    </p>
+    <a class="btn btn-outline-primary"
+    href="{% url 'learning_logs:new_topic' %}"
+    >
       Add a new topic
     </a>
-  </p>
+
+    <h2 class="mt-3">My topics:</h2>
+
+    <div class="list-group">
+      {% for topic in topics %}
+        <a class="list-group-item list-group-item-action"
+        href="{% url 'learning_logs:topic' topic.id %}"
+        >
+          {% if topic.public %}
+            <span class="text-warning">{{ topic.text }}</span>
+          {% else %}
+            <span>{{ topic.text }}</span>
+          {% endif %}
+        </a>
+      {% empty %}
+        <p class="list-group-item border-0">
+          No personal topics have been added yet.
+        </p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Topics shown to all visitors -->
+  <h2 class="mt-3">Public topics:</h2>
 
   <div class="list-group">
-    {% for topic in topics %}
-      <a class="list-group-item list-group-item-action" href="{% url 'learning_logs:topic' topic.id %}">
-        {{ topic.text }}
+    {% for topic in public_topics %}
+      <a class="list-group-item list-group-item-action"
+      href="{% url 'learning_logs:topic' topic.id %}"
+      >
+        {% if user == topic.owner %}
+          <span class="text-warning">{{ topic.text }}</span>
+        {% else %}
+          <span>{{ topic.text }}</span>
+        {% endif %}
+        <span class="text-body-secondary"> by {{ topic.owner }}</span>
       </a>
     {% empty %}
       <p class="list-group-item border-0">
-        No topics have been added yet.
+        No users have posted any public topics yet.
       </p>
     {% endfor %}
   </div>
