@@ -6,8 +6,8 @@ from .models import Entry, Topic
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ["text"]
-        labels = {"text": ""}
+        fields = ["text", "public"]
+        labels = {"text": "", "public": "Make this topic public."}
 
 
 class EntryForm(forms.ModelForm):
